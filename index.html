@@ -488,7 +488,7 @@ html, body { overflow-x: clip; }
   <section class="section follow">
     <div class="container">
       <p class="mono" style="color:var(--silver-2)">Follow SS</p>
-      <h2 class="display">@ss__accesorios</h2>
+      <h2 class="display">@ss___accesorios</h2>
       <p class="follow__handle">Looks, drops y novedades primero en Instagram.</p>
       <div class="ig-strip" id="igStrip"></div>
       <a data-ig href="#" target="_blank" rel="noopener" class="btn">Instagram <span class="arrow">→</span></a>
@@ -631,7 +631,7 @@ html, body { overflow-x: clip; }
         <div class="info-card" id="contacto"><span class="mono" style="color:var(--silver-2)">03</span><h3>Contacto</h3>
           <ul>
             <li><a id="contactWa" target="_blank" rel="noopener" href="#">WhatsApp →</a></li>
-            <li><a id="contactIg" target="_blank" rel="noopener" href="#">Instagram @ss__accesorios →</a></li>
+            <li><a id="contactIg" target="_blank" rel="noopener" href="#">Instagram @ss___accesorios →</a></li>
             <li><a id="contactMail" href="#"></a></li>
           </ul>
         </div>
@@ -652,8 +652,8 @@ html, body { overflow-x: clip; }
    ================================================================= */
 window.SS_CONFIG = {
   nombre: "SIN SEÑAL",
-  instagram: "ss__accesorios",
-  email: "julirincon@gmail.com",
+  instagram: "ss___accesorios",
+  email: "ss.accesorios.jr@gmail.com",
 
   // WhatsApp en formato internacional, sin +, espacios ni guiones.
   // Ej: 5491112345678  (54 = Argentina, 9 = celular, 11 = área)
@@ -665,6 +665,9 @@ window.SS_CONFIG = {
 
   // Descuento por transferencia (%). Poné 0 para ocultarlo.
   descuentoTransferencia: 10,
+
+  // Alias para transferencias (se muestra en el checkout y en el pedido)
+  aliasTransferencia: "julirincon",
 
   // Envíos: el costo se suma al total en el checkout.
   envioGratisDesde: 60000, // poné 0 si no hay envío gratis
@@ -1225,7 +1228,7 @@ window.SS_PH = {
       const gratis = C.envioGratisDesde && sub >= C.envioGratisDesde && m.precio > 0;
       return `<label class="option"><input type="radio" name="envio" value="${m.id}" required ${i === 0 ? "checked" : ""}><span class="option__name">${esc(m.nombre)}</span><span class="option__price">${m.precio === 0 || gratis ? "Gratis" : money(m.precio)}</span></label>`;
     }).join("");
-    $("#pagoOpts").innerHTML = C.metodosPago.map((m, i) => `<label class="option"><input type="radio" name="pago" value="${m.id}" required ${i === 0 ? "checked" : ""}><span class="option__name">${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? `<small>${C.descuentoTransferencia}% OFF sobre los productos</small>` : ""}</span></label>`).join("");
+    $("#pagoOpts").innerHTML = C.metodosPago.map((m, i) => `<label class="option"><input type="radio" name="pago" value="${m.id}" required ${i === 0 ? "checked" : ""}><span class="option__name">${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? `<small>${C.descuentoTransferencia}% OFF sobre los productos${C.aliasTransferencia ? ` · Alias: <b>${esc(C.aliasTransferencia)}</b>` : ""}</small>` : ""}</span></label>`).join("");
     $("#checkoutForm").addEventListener("change", renderSummary);
     renderSummary();
     if (!$("#checkoutForm")) return; // carrito vacío
@@ -1244,7 +1247,7 @@ ${lineas}
 Subtotal: ${money(t.sub)}${t.desc ? `\nDescuento transferencia: −${money(t.desc)}` : ""}
 Envío (${t.envio.nombre}): ${t.costoEnvio ? money(t.costoEnvio) : "Gratis"}
 TOTAL: ${money(t.total)}
-Pago: ${t.pago.nombre}
+Pago: ${t.pago.nombre}${t.pago.id === "transferencia" && C.aliasTransferencia ? ` (alias ${C.aliasTransferencia})` : ""}
 
 ${d.nombre} ${d.apellido}
 ${d.email} · ${d.telefono}
@@ -1266,7 +1269,8 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
         <div class="success">
           <span class="mono" style="color:var(--silver-2)">Pedido ${nro}</span>
           <span class="display">Señal<br>recibida</span>
-          <p>¡Gracias, ${esc(d.nombre)}! Para confirmar tu pedido y coordinar el pago, mandanos el resumen por WhatsApp.</p>
+          <p>¡Gracias, ${esc(d.nombre)}! Para confirmar tu pedido, mandanos el resumen por WhatsApp.</p>
+          ${t.pago.id === "transferencia" && C.aliasTransferencia ? `<div style="border:1px solid var(--black);padding:14px 18px;width:100%"><div class="mono" style="color:var(--silver-2)">Transferí al alias</div><div style="font-family:var(--f-mono);font-size:22px;font-weight:700;margin-top:4px">${esc(C.aliasTransferencia)}</div><div style="font-size:13px;color:var(--silver-2);margin-top:4px">y mandanos el comprobante por WhatsApp</div></div>` : ""}
           <p style="font-family:var(--f-mono);font-size:22px;font-weight:700">TOTAL ${money(t.total)}</p>
           <a class="btn btn--block" href="${wa}" target="_blank" rel="noopener">Enviar pedido por WhatsApp <span class="arrow">→</span></a>
           <a class="mono" href="#/" style="color:var(--silver-2);padding:10px">Volver al inicio</a>
@@ -1279,7 +1283,7 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
   function initAbout() {
     $("#envioList").innerHTML = C.metodosEnvio.map(m => `<li>${esc(m.nombre)} — ${m.precio ? money(m.precio) : "sin cargo"}</li>`).join("") +
       (C.envioGratisDesde ? `<li><b style="color:var(--white)">Envío gratis desde ${money(C.envioGratisDesde)}</b></li>` : "");
-    $("#pagoList").innerHTML = C.metodosPago.map(m => `<li>${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? ` — ${C.descuentoTransferencia}% OFF` : ""}</li>`).join("") +
+    $("#pagoList").innerHTML = C.metodosPago.map(m => `<li>${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? ` — ${C.descuentoTransferencia}% OFF` : ""}${m.id === "transferencia" && C.aliasTransferencia ? ` · Alias: ${esc(C.aliasTransferencia)}` : ""}</li>`).join("") +
       (C.cuotasSinInteres ? `<li>Hasta ${C.cuotasSinInteres} cuotas sin interés</li>` : "");
     $("#prepTime").textContent = C.tiempoPreparacion;
     $("#contactWa").href = waLink(C.whatsappMensaje);
