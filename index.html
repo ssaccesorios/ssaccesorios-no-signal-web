@@ -6,7 +6,8 @@
 <title>Sin Señal — Accesorios</title>
 <meta name="description" content="Collares y anillos plateados con actitud. Y2K, rock chic, urbano. No signal. No rules.">
 <meta name="theme-color" content="#0a0a0b">
-<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjMGEwYTBiIi8+PHRleHQgeD0iMzIiIHk9IjQ0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwgQmxhY2ssQXJpYWwiIGZvbnQtd2VpZ2h0PSI5MDAiIGZvbnQtc2l6ZT0iMzAiIGZpbGw9IiNlOGU5ZWIiPlNTPC90ZXh0Pjwvc3ZnPgo=">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTIiIGZpbGw9IiMwYTBhMGIiLz48dGV4dCB4PSIzMiIgeT0iNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjM0IiBsZXR0ZXItc3BhY2luZz0iLTEiIGZpbGw9IiNlOGU5ZWIiPnNzPC90ZXh0Pjwvc3ZnPg==">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTIiIGZpbGw9IiMwYTBhMGIiLz48dGV4dCB4PSIzMiIgeT0iNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjM0IiBsZXR0ZXItc3BhY2luZz0iLTEiIGZpbGw9IiNlOGU5ZWIiPnNzPC90ZXh0Pjwvc3ZnPg==">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
@@ -616,7 +617,7 @@ html, body { overflow-x: clip; }
       <h2 class="display">Esto<br>soy yo.</h2>
       <div>
         <p>Somos una marca argentina de collares y anillos. No hacemos joyería clásica ni delicada: hacemos piezas que se sienten parte del outfit y de quien las lleva.</p>
-        <p>Mezclamos moda, cultura urbana, Y2K, rock chic y streetwear. Nos inspiran personas, películas, series, música y todo lo que tenga una estética fuerte.</p>
+        
         <p>"Sin Señal" es una actitud: desconectarse de lo establecido y hacer las cosas a tu manera.</p>
         <div class="words" style="color:var(--black)"><span>Cool</span><span>Urbana</span><span>Y2K</span><span>Plateado</span><span>Rock chic</span><span>Nocturna</span><span>Editorial</span><span>Sin reglas</span></div>
       </div>
@@ -652,15 +653,15 @@ html, body { overflow-x: clip; }
 window.SS_CONFIG = {
   nombre: "SIN SEÑAL",
   instagram: "ss__accesorios",
-  email: "ss.accesorios.jr@gmail.com",
+  email: "julirincon@gmail.com",
 
   // WhatsApp en formato internacional, sin +, espacios ni guiones.
   // Ej: 5491112345678  (54 = Argentina, 9 = celular, 11 = área)
-  whatsapp: "5491100000000",
+  whatsapp: "5491158824915",
   whatsappMensaje: "Hola! Quería consultar por un producto de SS ACCESORIOS.",
 
   // Cuotas (se muestra debajo del precio). Poné 0 para ocultarlo.
-  cuotasSinInteres: 3,
+  cuotasSinInteres: 0,
 
   // Descuento por transferencia (%). Poné 0 para ocultarlo.
   descuentoTransferencia: 10,
@@ -676,7 +677,6 @@ window.SS_CONFIG = {
 
   metodosPago: [
     { id: "transferencia", nombre: "Transferencia bancaria", descuento: true },
-    { id: "mercadopago", nombre: "Mercado Pago", descuento: false },
     { id: "efectivo", nombre: "Efectivo (solo retiro)", descuento: false }
   ],
 
@@ -798,7 +798,7 @@ window.SS_PH = {
 
   /* ---------- Layout compartido ---------- */
   function renderChrome() {
-    const top = `ENVÍOS A TODO EL PAÍS <span class="dot">●</span> ${C.cuotasSinInteres ? C.cuotasSinInteres + " CUOTAS SIN INTERÉS" : "MEDIOS DE PAGO"} <span class="dot">●</span> ${C.descuentoTransferencia ? C.descuentoTransferencia + "% OFF POR TRANSFERENCIA" : ""} <span class="dot">●</span> @${C.instagram}`;
+    const top = `ENVÍOS A TODO EL PAÍS <span class="dot">●</span> ${C.descuentoTransferencia ? C.descuentoTransferencia + "% OFF POR TRANSFERENCIA" : ""} <span class="dot">●</span> @${C.instagram}`;
     const topItems = Array(6).fill(`<span>${top}</span>`).join("");
 
     const header = `
@@ -1228,6 +1228,7 @@ window.SS_PH = {
     $("#pagoOpts").innerHTML = C.metodosPago.map((m, i) => `<label class="option"><input type="radio" name="pago" value="${m.id}" required ${i === 0 ? "checked" : ""}><span class="option__name">${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? `<small>${C.descuentoTransferencia}% OFF sobre los productos</small>` : ""}</span></label>`).join("");
     $("#checkoutForm").addEventListener("change", renderSummary);
     renderSummary();
+    if (!$("#checkoutForm")) return; // carrito vacío
 
     $("#checkoutForm").addEventListener("submit", async e => {
       e.preventDefault();
