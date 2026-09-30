@@ -203,7 +203,7 @@ input, select, textarea { font: inherit; }
 .hero__kicker { display: flex; align-items: center; gap: 8px; color: var(--silver); margin-bottom: 14px; }
 .hero__kicker .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: blink 1.6s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
-.hero__title { font-size: clamp(64px, 20vw, 190px); line-height: .92; }
+.hero__title { font-size: clamp(48px, 16vw, 190px); line-height: .92; white-space: nowrap; max-width: 100%; }
 .hero__tag { font-family: var(--f-display); font-weight: 500; font-size: clamp(18px, 5vw, 28px); margin: 14px 0 26px; font-style: italic; text-transform: lowercase; color: var(--silver); }
 .hero__corner { position: absolute; top: 18px; right: var(--gutter); z-index: 2; text-align: right; color: var(--silver); }
 @media (min-width: 960px) {
@@ -671,17 +671,13 @@ window.SS_CONFIG = {
   aliasTransferencia: "julirincon",
 
   // Envíos: el costo se suma al total en el checkout.
-  envioGratisDesde: 60000, // poné 0 si no hay envío gratis
+  envioGratisDesde: 0, // poné 0 si no hay envío gratis
   metodosEnvio: [
-    { id: "correo", nombre: "Correo Argentino a domicilio", precio: 6500 },
-    { id: "andreani", nombre: "Andreani a sucursal", precio: 5500 },
-    { id: "moto", nombre: "Moto en CABA / GBA", precio: 4500 },
-    { id: "retiro", nombre: "Retiro por punto de encuentro", precio: 0 }
+    { id: "correo", nombre: "Correo Argentino", precio: 6500 }
   ],
 
   metodosPago: [
-    { id: "transferencia", nombre: "Transferencia bancaria", descuento: true },
-    { id: "efectivo", nombre: "Efectivo (solo retiro)", descuento: false }
+    { id: "transferencia", nombre: "Transferencia bancaria", descuento: true }
   ],
 
   tiempoPreparacion: "Preparamos tu pedido en 24 a 72 hs hábiles."
@@ -1295,8 +1291,19 @@ window.SS_PH = {
     $$(".reveal:not(.in)").forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(el); });
   }
 
+  /* ---------- Ajusta el título del hero para que "SEÑAL" nunca se corte ---------- */
+  function fitHero() {
+    const t = $(".hero__title"); if (!t) return;
+    t.style.fontSize = "";
+    let size = parseFloat(getComputedStyle(t).fontSize), guard = 0;
+    while (t.scrollWidth > t.clientWidth + 1 && size > 24 && guard++ < 80) { size -= 2; t.style.fontSize = size + "px"; }
+  }
+  window.addEventListener("resize", fitHero);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHero);
+
   /* ---------- HOME ---------- */
   function initHome() {
+    fitHero();
     const nuevos = P.filter(p => p.stock > 0).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 4);
     $("#homeNew").innerHTML = nuevos.map(card).join("");
     const best = P.filter(p => p.bestSeller && p.stock > 0).sort((a, b) => b.vendidos - a.vendidos).slice(0, 4);
