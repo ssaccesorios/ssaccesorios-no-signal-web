@@ -601,7 +601,7 @@ html, body { overflow-x: clip; }
       <div class="summary__lines" id="summaryLines"></div>
       <div class="summary__total"><span>Total</span><span id="summaryTotal">$0</span></div>
       <button class="btn btn--block" id="payBtn" type="submit" form="checkoutForm" style="margin-top:16px">Confirmar pedido <span class="arrow">→</span></button>
-      <p class="checkout-note" style="margin-top:10px">Al confirmar, te pasamos los datos de pago por WhatsApp o email. Tu pedido se reserva por 24 hs.</p>
+      <p class="checkout-note" style="margin-top:10px">Al confirmar vas a ver el alias para transferir. Después nos enviás el pedido y el comprobante de la transferencia por WhatsApp. Tu pedido se reserva por 24 hs.</p>
     </aside>
   </div>
 </main></template>
@@ -1500,14 +1500,20 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
       } catch (err) { /* si falla (ej. probando local), igual seguimos por WhatsApp */ }
 
       saveCart([]);
-      const wa = waLink(`Hola! Acabo de hacer un pedido en la web 🖤\n\n${detalle}`);
+      const esTransf = t.pago.id === "transferencia" && C.aliasTransferencia;
+      const wa = waLink(`Hola! Acabo de hacer un pedido en la web 🖤\n\n${detalle}${esTransf ? "\n\n📎 Te adjunto en este chat el comprobante de la transferencia." : ""}`);
+      const paso = (n, titulo, texto) => `<li style="display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;padding:14px 0;border-top:1px solid var(--line)"><span style="font-family:var(--f-mono);font-size:12px;font-weight:700;width:28px;height:28px;display:grid;place-items:center;background:var(--black);color:var(--white)">${n}</span><span><b style="display:block;text-transform:uppercase;font-size:14px;letter-spacing:.02em">${titulo}</b><span style="font-size:14px;color:#3b3d42">${texto}</span></span></li>`;
       $("#checkoutWrap").innerHTML = `
         <div class="success">
           <span class="mono" style="color:var(--silver-2)">Pedido ${nro}</span>
           <span class="display">Señal<br>recibida</span>
-          <p>¡Gracias, ${esc(d.nombre)}! Para confirmar tu pedido, mandanos el resumen por WhatsApp.</p>
-          ${t.pago.id === "transferencia" && C.aliasTransferencia ? `<div style="border:1px solid var(--black);padding:14px 18px;width:100%"><div class="mono" style="color:var(--silver-2)">Transferí al alias</div><div style="font-family:var(--f-mono);font-size:22px;font-weight:700;margin-top:4px">${esc(C.aliasTransferencia)}</div><div style="font-size:13px;color:var(--silver-2);margin-top:4px">y mandanos el comprobante por WhatsApp</div></div>` : ""}
-          <p style="font-family:var(--f-mono);font-size:22px;font-weight:700">TOTAL ${money(t.total)}</p>
+          <p>¡Gracias, ${esc(d.nombre)}! Tu pedido quedó registrado. Para confirmarlo, seguí estos pasos:</p>
+          ${esTransf ? `<ol style="list-style:none;width:100%;text-align:left;border-bottom:1px solid var(--line)">
+            ${paso(1, "Transferí " + money(t.total), `Al alias <b style="font-family:var(--f-mono);font-size:16px;color:var(--black)">${esc(C.aliasTransferencia)}</b>`)}
+            ${paso(2, "Enviá el pedido por WhatsApp", "Tocá el botón de abajo: el mensaje ya está armado con todos tus datos.")}
+            ${paso(3, "Adjuntá el comprobante", "En ese mismo chat mandanos la captura o el PDF del comprobante de la transferencia.")}
+          </ol>
+          <p style="font-size:13.5px;background:var(--paper);padding:12px 14px;width:100%;text-align:left;border-left:3px solid var(--red)"><b>Importante:</b> sin el comprobante de transferencia no podemos confirmar ni despachar tu pedido.</p>` : `<p style="font-family:var(--f-mono);font-size:22px;font-weight:700">TOTAL ${money(t.total)}</p>`}
           <a class="btn btn--block" href="${wa}" target="_blank" rel="noopener">Enviar pedido por WhatsApp <span class="arrow">→</span></a>
           <a class="mono" href="#/" style="color:var(--silver-2);padding:10px">Volver al inicio</a>
         </div>`;
@@ -1544,6 +1550,7 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
     $$("img[data-src]", main).forEach(i => i.src = IMG(i.dataset.src));
     $$("[data-key]").forEach(a => a.classList.toggle("active", a.dataset.key === currentKey));
     document.title = TITLES[page] || "Sin Señal";
+    const waBtn = $(".wa"); if (waBtn) waBtn.hidden = page === "checkout"; // en el checkout se usa el botón del pedido
     ({ home: initHome, shop: initShop, producto: initProduct, checkout: initCheckout, sobre: initAbout }[page] || (() => {}))();
     observeReveal();
     const s = params.get("s");
