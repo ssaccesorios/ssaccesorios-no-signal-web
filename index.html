@@ -772,7 +772,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena snake plateada con nudo. Minimal, larga y con mucho movimiento.",
     imagenes: ["ph:collar-id"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-wings",
@@ -805,7 +805,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo ancho de franjas plateadas con textura martillada. Pesado, llamativo y bien rock.",
     imagenes: ["ph:anillo-02"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-03",
@@ -827,7 +827,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de metal fundido con formas irregulares. Una pieza escultural, distinta a todo.",
     imagenes: ["ph:anillo-04"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-05",
@@ -871,7 +871,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de eslabones tipo cadena con textura trenzada. Rock y minimal a la vez.",
     imagenes: ["ph:anillo-08"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-09",
@@ -882,7 +882,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo con óvalo hueco tipo sello. Simple, geométrico y fácil de combinar.",
     imagenes: ["ph:anillo-09"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-10",
@@ -1260,7 +1260,7 @@ window.SS_PH = {
   function card(p) {
     const out = p.stock <= 0;
     const badges = [
-      out ? '<span class="badge badge--dark">Agotado</span>' : "",
+      out ? '<span class="badge badge--dark">Sold out</span>' : "",
       p.nuevo && !out ? '<span class="badge">New</span>' : "",
       p.bestSeller && !out ? '<span class="badge badge--dark">★ Best</span>' : "",
       p.stock > 0 && p.stock <= 3 ? '<span class="badge badge--red">Últimos</span>' : ""
