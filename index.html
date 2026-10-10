@@ -604,6 +604,183 @@ html, body { overflow-x: clip; }
       <p class="checkout-note" style="margin-top:10px">Al confirmar vas a ver el alias para transferir. Después nos enviás el pedido y el comprobante de la transferencia por WhatsApp. Tu pedido se reserva por 24 hs.</p>
     </aside>
   </div>
+
+<!-- =====================================================================
+     FORMULARIO DE ENVÍOS · Correo Argentino (mismos campos que MiCorreo)
+     Pegar este bloque entero dentro del <body> del index.html, donde
+     quieras que aparezca el formulario. No necesita nada más.
+
+     Los datos llegan por Netlify Forms (si la web está en Netlify):
+     Netlify > tu sitio > Forms > "envio". Ahí se puede activar el aviso
+     por mail. Si la web NO está en Netlify, avisar para cambiar el envío.
+     ===================================================================== -->
+<style>
+  .envio-form{ --ef-ink:#0a0a0b; --ef-muted:#55585e; --ef-line:#c4c7cc; --ef-bg:#fff; --ef-accent:#0a0a0b; --ef-error:#c0392b;
+    max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:14px; font-family:inherit; color:var(--ef-ink); }
+  .envio-form *{ box-sizing:border-box; }
+  .envio-form h3{ margin:0; font-size:1.2rem; }
+  .ef-field{ display:flex; flex-direction:column; gap:6px; font-size:.85rem; color:var(--ef-muted); min-width:0; }
+  .ef-field input, .ef-field select, .ef-field textarea{ width:100%; font:inherit; font-size:16px; color:var(--ef-ink);
+    background:var(--ef-bg); border:1px solid var(--ef-line); border-radius:8px; padding:12px 13px; }
+  .ef-field input::placeholder, .ef-field textarea::placeholder{ color:#a5a5a5; }
+  .ef-field input:focus, .ef-field select:focus, .ef-field textarea:focus{ outline:none; border-color:var(--ef-accent); box-shadow:0 0 0 3px rgba(0,0,0,.08); }
+  .ef-field textarea{ min-height:70px; resize:vertical; }
+  .ef-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ef-row--area{ grid-template-columns:.8fr 1.4fr; }
+  .ef-seg{ display:grid; grid-template-columns:1fr 1fr; gap:8px; border:none; margin:0; padding:0; min-width:0; }
+  .ef-seg--3{ grid-template-columns:repeat(3,1fr); }
+  .ef-seg legend{ font-size:.85rem; color:var(--ef-muted); margin-bottom:6px; padding:0; }
+  .ef-seg label{ position:relative; display:flex; flex-direction:column; gap:2px; border:1px solid var(--ef-line); border-radius:8px;
+    background:var(--ef-bg); padding:10px 12px; cursor:pointer; font-size:.9rem; color:var(--ef-ink); }
+  .ef-seg label small{ font-size:.72rem; color:var(--ef-muted); }
+  .ef-seg input{ position:absolute; opacity:0; pointer-events:none; }
+  .ef-seg label:has(input:checked){ border-color:var(--ef-accent); box-shadow:inset 0 0 0 1px var(--ef-accent); }
+  .ef-seg label[hidden]{ display:none; }
+  .ef-note{ font-size:.78rem; color:var(--ef-muted); margin:0; }
+  .ef-note a{ color:inherit; }
+  .ef-error{ display:none; color:var(--ef-error); font-size:.82rem; margin:0; }
+  .ef-btn{ font:inherit; font-weight:600; padding:15px 20px; border:none; border-radius:8px; background:var(--ef-accent); color:#fff; cursor:pointer; }
+  .ef-btn:disabled{ opacity:.5; cursor:progress; }
+  .ef-ok{ display:none; padding:16px; border:1px solid var(--ef-line); border-radius:8px; }
+  @media (max-width:480px){ .ef-seg--3{ grid-template-columns:1fr; } }
+</style>
+
+<form class="envio-form" id="envioForm" name="envio" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+  <input type="hidden" name="form-name" value="envio">
+  <p hidden><label>No completar: <input name="bot-field"></label></p>
+  <!-- Campos que se mandan (mismo orden que MiCorreo). Se completan solos al enviar. -->
+  <input type="hidden" name="tipoEntrega"><input type="hidden" name="nombreApellido"><input type="hidden" name="provincia">
+  <input type="hidden" name="localidad"><input type="hidden" name="direccion"><input type="hidden" name="sucursal">
+  <input type="hidden" name="codigoPostal"><input type="hidden" name="email"><input type="hidden" name="codArea">
+  <input type="hidden" name="celular"><input type="hidden" name="observaciones"><input type="hidden" name="servicio">
+
+  <h3>Datos de envío · Correo Argentino</h3>
+
+  <fieldset class="ef-seg"><legend>¿Dónde lo recibís?</legend>
+    <label><input type="radio" name="ef-tipo" value="Domicilio" checked>A domicilio<small>Te lo lleva el cartero</small></label>
+    <label><input type="radio" name="ef-tipo" value="Sucursal">En sucursal<small>Lo retirás vos</small></label>
+  </fieldset>
+
+  <label class="ef-field">Nombre y apellido<input type="text" id="ef-nombre" autocomplete="name"></label>
+
+  <label class="ef-field">Provincia
+    <select id="ef-provincia" autocomplete="address-level1">
+      <option value="">Elegí tu provincia</option>
+      <option>CABA</option><option>Buenos Aires</option><option>Catamarca</option><option>Chaco</option><option>Chubut</option>
+      <option>Córdoba</option><option>Corrientes</option><option>Entre Ríos</option><option>Formosa</option><option>Jujuy</option>
+      <option>La Pampa</option><option>La Rioja</option><option>Mendoza</option><option>Misiones</option><option>Neuquén</option>
+      <option>Río Negro</option><option>Salta</option><option>San Juan</option><option>San Luis</option><option>Santa Cruz</option>
+      <option>Santa Fe</option><option>Santiago del Estero</option><option>Tierra del Fuego</option><option>Tucumán</option>
+    </select>
+  </label>
+
+  <div id="ef-domicilio" style="display:flex; flex-direction:column; gap:14px">
+    <div class="ef-row">
+      <label class="ef-field">Localidad<input type="text" id="ef-localidad" autocomplete="address-level2"></label>
+      <label class="ef-field">Código postal<input type="text" id="ef-cp" autocomplete="postal-code" inputmode="numeric" maxlength="8"></label>
+    </div>
+    <label class="ef-field">Calle y altura<input type="text" id="ef-calle" autocomplete="address-line1" placeholder="Ej: Av. Rivadavia 1234"></label>
+    <div class="ef-row">
+      <label class="ef-field">Piso (opcional)<input type="text" id="ef-piso" autocomplete="off"></label>
+      <label class="ef-field">Depto (opcional)<input type="text" id="ef-depto" autocomplete="off"></label>
+    </div>
+  </div>
+
+  <div id="ef-sucursal" style="display:none; flex-direction:column; gap:8px">
+    <label class="ef-field">Sucursal de Correo Argentino<input type="text" id="ef-suc" autocomplete="off" placeholder="Localidad y dirección de la sucursal"></label>
+    <p class="ef-note">Buscá la más cercana en el <a href="https://www.correoargentino.com.ar/formularios/sucursales" target="_blank" rel="noopener">buscador de sucursales</a>.</p>
+  </div>
+
+  <label class="ef-field">Email<input type="email" id="ef-email" autocomplete="email" inputmode="email"></label>
+
+  <div class="ef-row ef-row--area">
+    <label class="ef-field">Cód. área (sin 0)<input type="text" id="ef-area" autocomplete="tel-area-code" inputmode="numeric" maxlength="4" placeholder="11"></label>
+    <label class="ef-field">Celular (sin 15)<input type="tel" id="ef-cel" autocomplete="tel-local" inputmode="numeric" maxlength="8" placeholder="12345678"></label>
+  </div>
+
+  <fieldset class="ef-seg ef-seg--3" id="ef-servicio"><legend>Servicio PAQ.AR</legend>
+    <label><input type="radio" name="ef-serv" value="PAQ.AR Clásico" checked>Clásico<small>2 a 5 días hábiles</small></label>
+    <label><input type="radio" name="ef-serv" value="PAQ.AR Expreso">Expreso<small>1 a 3 días hábiles</small></label>
+    <label data-hoy><input type="radio" name="ef-serv" value="PAQ.AR Hoy">Hoy<small>En el día · CABA y GBA</small></label>
+  </fieldset>
+
+  <label class="ef-field" id="ef-obs-wrap">Observaciones (opcional)<textarea id="ef-obs" maxlength="200" placeholder="Ej: timbre B, entre calles, horario"></textarea></label>
+
+  <p class="ef-note">El costo del envío te lo pasamos según peso, destino y servicio antes de despachar.</p>
+  <p class="ef-error" id="ef-error" role="alert"></p>
+  <button type="submit" class="ef-btn" id="ef-btn">Enviar datos</button>
+</form>
+<div class="ef-ok" id="ef-ok"><b>¡Listo, recibimos tus datos de envío!</b><br>Te escribimos con el costo y el seguimiento.</div>
+
+<script>
+(function(){
+  var form = document.getElementById('envioForm');
+  if (!form) return;
+  var $ = function(id){ return document.getElementById(id); };
+  var val = function(id){ return $(id).value.trim(); };
+  var tipo = function(){ return form.querySelector('input[name="ef-tipo"]:checked').value; };
+
+  // Muestra domicilio o sucursal. PAQ.AR Hoy solo aparece a domicilio en CABA o Buenos Aires.
+  function actualizar(){
+    var dom = tipo() === 'Domicilio';
+    $('ef-domicilio').style.display = dom ? 'flex' : 'none';
+    $('ef-sucursal').style.display = dom ? 'none' : 'flex';
+    $('ef-obs-wrap').style.display = dom ? 'flex' : 'none';
+    var hoyOk = dom && (val('ef-provincia') === 'CABA' || val('ef-provincia') === 'Buenos Aires');
+    var hoy = form.querySelector('[data-hoy]');
+    hoy.hidden = !hoyOk;
+    $('ef-servicio').classList.toggle('ef-seg--3', hoyOk);
+    if (!hoyOk && hoy.querySelector('input').checked) form.querySelector('input[name="ef-serv"]').checked = true;
+  }
+  form.querySelectorAll('input[name="ef-tipo"]').forEach(function(r){ r.addEventListener('change', actualizar); });
+  $('ef-provincia').addEventListener('change', actualizar);
+  actualizar();
+
+  function error(msg, id){ var e = $('ef-error'); e.textContent = msg; e.style.display = 'block'; if (id) $(id).focus(); }
+
+  form.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    var dom = tipo() === 'Domicilio';
+    var obligatorios = ['ef-nombre','ef-provincia','ef-email','ef-area','ef-cel'].concat(dom ? ['ef-localidad','ef-cp','ef-calle'] : ['ef-suc']);
+    var vacio = obligatorios.filter(function(id){ return !val(id); })[0];
+    if (vacio) return error('Completá todos los campos para continuar.', vacio);
+    if (!/^\S+@\S+\.\S+$/.test(val('ef-email'))) return error('Revisá el email.', 'ef-email');
+    var area = val('ef-area').replace(/\D/g,'').replace(/^0+/,'');
+    var cel = val('ef-cel').replace(/\D/g,'').replace(/^15/,'');
+    // En Argentina, código de área + número suman 10 dígitos (ej: 11 + 12345678).
+    if (area.length < 2 || area.length > 4 || (area + cel).length !== 10)
+      return error('Revisá el celular: código de área sin 0 y número sin 15, que sumen 10 dígitos (ej: 11 y 12345678).', 'ef-area');
+    var cp = val('ef-cp').replace(/\s/g,'').toUpperCase();
+    if (dom && !/^[A-Z]?\d{4}[A-Z]{0,3}$/.test(cp)) return error('Revisá el código postal (ej: 1406 o C1406ABC).', 'ef-cp');
+    $('ef-error').style.display = 'none';
+
+    var piso = val('ef-piso'), depto = val('ef-depto');
+    var datos = {
+      tipoEntrega: tipo(), nombreApellido: val('ef-nombre'), provincia: val('ef-provincia'),
+      localidad: dom ? val('ef-localidad') : '',
+      direccion: dom ? val('ef-calle') + (piso ? ', piso ' + piso : '') + (depto ? ', depto ' + depto : '') : '',
+      sucursal: dom ? '' : val('ef-suc'),
+      codigoPostal: dom ? cp : '', email: val('ef-email'), codArea: area, celular: cel,
+      observaciones: dom ? val('ef-obs') : '',
+      servicio: form.querySelector('input[name="ef-serv"]:checked').value
+    };
+    Object.keys(datos).forEach(function(k){ form.querySelector('input[name="' + k + '"]').value = datos[k]; });
+
+    var btn = $('ef-btn'); btn.disabled = true; btn.textContent = 'Enviando...';
+    var body = new URLSearchParams({ 'form-name': 'envio' });
+    Object.keys(datos).forEach(function(k){ body.append(k, datos[k]); });
+    try {
+      var res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
+      if (!res.ok) throw new Error(res.status);
+      form.style.display = 'none'; $('ef-ok').style.display = 'block';
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Enviar datos';
+      error('No se pudo enviar. Probá de nuevo en un rato.');
+    }
+  });
+})();
+</script>
+<!-- ================== FIN FORMULARIO DE ENVÍOS ================== -->
 </main></template>
 <template id="tpl-sobre"><main>
   <section class="section section--dark manifesto" style="padding:80px 0">
