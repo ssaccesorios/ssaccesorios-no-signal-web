@@ -358,6 +358,9 @@ input, select, textarea { font: inherit; }
 .option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid #cfd1d5; cursor: pointer; transition: border-color .2s, background .2s; }
 .option:has(input:checked) { border-color: var(--black); background: var(--paper); }
 .option input { accent-color: var(--black); width: 18px; height: 18px; flex: none; }
+.option[hidden] { display: none; }
+.option__name small { display: block; font-size: 12px; color: #55585e; font-weight: 400; }
+.ef-error { display: none; color: var(--red); font-size: 13.5px; font-weight: 600; }
 .option__name { flex: 1; font-weight: 600; font-size: 14px; }
 .option__name small { display: block; font-weight: 400; color: var(--silver-2); font-size: 12px; }
 .option__price { font-family: var(--f-mono); font-size: 13px; font-weight: 700; }
@@ -422,7 +425,7 @@ html, body { overflow-x: clip; }
 </head>
 <body>
 <!-- Formulario oculto para que Netlify registre los pedidos (Netlify > Forms > pedidos). No tocar. -->
-<form name="pedidos" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="pedido"> <input name="detalle"> <input name="total"> <input name="nombre"> <input name="apellido"> <input name="email"> <input name="telefono"> <input name="direccion"> <input name="localidad"> <input name="cp"> <input name="provincia"> <input name="envio"> <input name="pago"> <input name="notas"> <input name="bot-field"></form>
+<form name="pedidos" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="pedido"> <input name="detalle"> <input name="total"> <input name="tipoEntrega"> <input name="nombreApellido"> <input name="provincia"> <input name="localidad"> <input name="direccion"> <input name="sucursal"> <input name="codigoPostal"> <input name="email"> <input name="codArea"> <input name="celular"> <input name="servicio"> <input name="observaciones"> <input name="pago"> <input name="notas"> <input name="bot-field"></form>
 
 <div id="app"></div>
 
@@ -551,11 +554,13 @@ html, body { overflow-x: clip; }
 </main></template>
 <template id="tpl-checkout"><main class="container" id="checkoutWrap">
   <div class="checkout">
-    <form id="checkoutForm" name="pedidos" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <form id="checkoutForm" name="pedidos" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
       <input type="hidden" name="form-name" value="pedidos">
-      <input type="hidden" name="pedido">
-      <input type="hidden" name="detalle">
-      <input type="hidden" name="total">
+      <input type="hidden" name="pedido"><input type="hidden" name="detalle"><input type="hidden" name="total">
+      <input type="hidden" name="tipoEntrega"><input type="hidden" name="nombreApellido"><input type="hidden" name="provincia">
+      <input type="hidden" name="localidad"><input type="hidden" name="direccion"><input type="hidden" name="sucursal">
+      <input type="hidden" name="codigoPostal"><input type="hidden" name="email"><input type="hidden" name="codArea">
+      <input type="hidden" name="celular"><input type="hidden" name="servicio"><input type="hidden" name="observaciones">
       <p hidden><label>No completar: <input name="bot-field"></label></p>
 
       <div class="crumbs mono"><a href="#/">Inicio</a> / Checkout</div>
@@ -563,35 +568,62 @@ html, body { overflow-x: clip; }
 
       <div class="form-section">
         <div class="form-section__title"><span class="n">1</span>Tus datos</div>
-        <div class="field-row">
-          <div class="field"><label for="f-nombre">Nombre</label><input id="f-nombre" name="nombre" required autocomplete="given-name"></div>
-          <div class="field"><label for="f-apellido">Apellido</label><input id="f-apellido" name="apellido" required autocomplete="family-name"></div>
+        <div class="field"><label for="ef-nombre">Nombre y apellido</label><input id="ef-nombre" type="text" autocomplete="name"></div>
+        <div class="field"><label for="ef-email">Email</label><input id="ef-email" type="email" autocomplete="email" inputmode="email"></div>
+        <div class="field-row" style="grid-template-columns:.8fr 1.4fr">
+          <div class="field"><label for="ef-area">Cód. área (sin 0)</label><input id="ef-area" type="text" autocomplete="tel-area-code" inputmode="numeric" maxlength="4" placeholder="11"></div>
+          <div class="field"><label for="ef-cel">Celular (sin 15)</label><input id="ef-cel" type="tel" autocomplete="tel-local" inputmode="numeric" maxlength="8" placeholder="12345678"></div>
         </div>
-        <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
-        <div class="field"><label for="f-tel">Teléfono</label><input id="f-tel" name="telefono" type="tel" required autocomplete="tel" placeholder="11 1234 5678"></div>
       </div>
 
       <div class="form-section">
-        <div class="form-section__title"><span class="n">2</span>Envío</div>
-        <div class="field"><label for="f-dir">Dirección</label><input id="f-dir" name="direccion" required autocomplete="street-address" placeholder="Calle, número, piso, depto"></div>
-        <div class="field-row">
-          <div class="field"><label for="f-loc">Localidad</label><input id="f-loc" name="localidad" required autocomplete="address-level2"></div>
-          <div class="field"><label for="f-cp">Código postal</label><input id="f-cp" name="cp" required autocomplete="postal-code" inputmode="numeric"></div>
+        <div class="form-section__title"><span class="n">2</span>Envío · Correo Argentino</div>
+        <div class="mono" style="color:var(--silver-2)">¿Dónde lo recibís?</div>
+        <div style="display:grid;gap:8px">
+          <label class="option"><input type="radio" name="ef-tipo" value="Domicilio" checked><span class="option__name">A domicilio<small>Te lo lleva el cartero</small></span></label>
+          <label class="option"><input type="radio" name="ef-tipo" value="Sucursal"><span class="option__name">En sucursal<small>Lo retirás vos</small></span></label>
         </div>
-        <div class="field"><label for="f-prov">Provincia</label>
-          <select id="f-prov" name="provincia" required autocomplete="address-level1">
+        <div class="field"><label for="ef-provincia">Provincia</label>
+          <select id="ef-provincia" autocomplete="address-level1">
             <option value="">Elegí tu provincia</option>
             <option>CABA</option><option>Buenos Aires</option><option>Catamarca</option><option>Chaco</option><option>Chubut</option><option>Córdoba</option><option>Corrientes</option><option>Entre Ríos</option><option>Formosa</option><option>Jujuy</option><option>La Pampa</option><option>La Rioja</option><option>Mendoza</option><option>Misiones</option><option>Neuquén</option><option>Río Negro</option><option>Salta</option><option>San Juan</option><option>San Luis</option><option>Santa Cruz</option><option>Santa Fe</option><option>Santiago del Estero</option><option>Tierra del Fuego</option><option>Tucumán</option>
           </select>
         </div>
-        <div class="mono" style="color:var(--silver-2);margin-top:6px">Método de envío</div>
-        <div id="envioOpts" style="display:grid;gap:8px"></div>
+
+        <div id="ef-domicilio" style="display:grid;gap:12px">
+          <div class="field-row">
+            <div class="field"><label for="ef-localidad">Localidad</label><input id="ef-localidad" type="text" autocomplete="address-level2"></div>
+            <div class="field"><label for="ef-cp">Código postal</label><input id="ef-cp" type="text" autocomplete="postal-code" inputmode="numeric" maxlength="8"></div>
+          </div>
+          <div class="field"><label for="ef-calle">Calle y altura</label><input id="ef-calle" type="text" autocomplete="address-line1" placeholder="Ej: Av. Rivadavia 1234"></div>
+          <div class="field-row">
+            <div class="field"><label for="ef-piso">Piso (opcional)</label><input id="ef-piso" type="text" autocomplete="off"></div>
+            <div class="field"><label for="ef-depto">Depto (opcional)</label><input id="ef-depto" type="text" autocomplete="off"></div>
+          </div>
+        </div>
+
+        <div id="ef-sucursal" style="display:none;gap:8px">
+          <div class="field"><label for="ef-suc">Sucursal de Correo Argentino</label><input id="ef-suc" type="text" autocomplete="off" placeholder="Localidad y dirección de la sucursal"></div>
+          <p class="checkout-note">Buscá la más cercana en el <a href="https://www.correoargentino.com.ar/formularios/sucursales" target="_blank" rel="noopener" style="text-decoration:underline">buscador de sucursales</a>.</p>
+        </div>
+
+        <div class="mono" style="color:var(--silver-2);margin-top:6px">Servicio PAQ.AR</div>
+        <div id="ef-servicio" style="display:grid;gap:8px">
+          <label class="option"><input type="radio" name="ef-serv" value="PAQ.AR Clásico" checked><span class="option__name">Clásico<small>2 a 5 días hábiles</small></span></label>
+          <label class="option"><input type="radio" name="ef-serv" value="PAQ.AR Expreso"><span class="option__name">Expreso<small>1 a 3 días hábiles</small></span></label>
+          <label class="option" data-hoy hidden><input type="radio" name="ef-serv" value="PAQ.AR Hoy"><span class="option__name">Hoy<small>En el día · CABA y GBA</small></span></label>
+        </div>
+
+        <div class="field" id="ef-obs-wrap"><label for="ef-obs">Observaciones del envío (opcional)</label><textarea id="ef-obs" maxlength="200" placeholder="Ej: timbre B, entre calles, horario"></textarea></div>
+        <p class="checkout-note">El costo del envío no está incluido en el total: te lo pasamos por WhatsApp según peso, destino y servicio antes de despachar.</p>
+        <a class="btn btn--ghost btn--block" id="coordinaEntrega" target="_blank" rel="noopener" href="#">Coordiná tu entrega</a>
       </div>
 
       <div class="form-section">
         <div class="form-section__title"><span class="n">3</span>Pago</div>
         <div id="pagoOpts" style="display:grid;gap:8px"></div>
         <div class="field"><label for="f-notas">Notas (opcional)</label><textarea id="f-notas" name="notas" placeholder="Talle del anillo, aclaraciones, si es para regalo…"></textarea></div>
+        <p class="ef-error" id="ef-error" role="alert"></p>
       </div>
     </form>
 
@@ -601,186 +633,9 @@ html, body { overflow-x: clip; }
       <div class="summary__lines" id="summaryLines"></div>
       <div class="summary__total"><span>Total</span><span id="summaryTotal">$0</span></div>
       <button class="btn btn--block" id="payBtn" type="submit" form="checkoutForm" style="margin-top:16px">Confirmar pedido <span class="arrow">→</span></button>
-      <p class="checkout-note" style="margin-top:10px">Al confirmar vas a ver el alias para transferir. Después nos enviás el pedido y el comprobante de la transferencia por WhatsApp. Tu pedido se reserva por 24 hs.</p>
+      <p class="checkout-note" style="margin-top:10px">Al confirmar vas a ver el alias para transferir. Después nos enviás el pedido y el comprobante de la transferencia por WhatsApp. El envío se abona aparte. Tu pedido se reserva por 24 hs.</p>
     </aside>
   </div>
-
-<!-- =====================================================================
-     FORMULARIO DE ENVÍOS · Correo Argentino (mismos campos que MiCorreo)
-     Pegar este bloque entero dentro del <body> del index.html, donde
-     quieras que aparezca el formulario. No necesita nada más.
-
-     Los datos llegan por Netlify Forms (si la web está en Netlify):
-     Netlify > tu sitio > Forms > "envio". Ahí se puede activar el aviso
-     por mail. Si la web NO está en Netlify, avisar para cambiar el envío.
-     ===================================================================== -->
-<style>
-  .envio-form{ --ef-ink:#0a0a0b; --ef-muted:#55585e; --ef-line:#c4c7cc; --ef-bg:#fff; --ef-accent:#0a0a0b; --ef-error:#c0392b;
-    max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:14px; font-family:inherit; color:var(--ef-ink); }
-  .envio-form *{ box-sizing:border-box; }
-  .envio-form h3{ margin:0; font-size:1.2rem; }
-  .ef-field{ display:flex; flex-direction:column; gap:6px; font-size:.85rem; color:var(--ef-muted); min-width:0; }
-  .ef-field input, .ef-field select, .ef-field textarea{ width:100%; font:inherit; font-size:16px; color:var(--ef-ink);
-    background:var(--ef-bg); border:1px solid var(--ef-line); border-radius:8px; padding:12px 13px; }
-  .ef-field input::placeholder, .ef-field textarea::placeholder{ color:#a5a5a5; }
-  .ef-field input:focus, .ef-field select:focus, .ef-field textarea:focus{ outline:none; border-color:var(--ef-accent); box-shadow:0 0 0 3px rgba(0,0,0,.08); }
-  .ef-field textarea{ min-height:70px; resize:vertical; }
-  .ef-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .ef-row--area{ grid-template-columns:.8fr 1.4fr; }
-  .ef-seg{ display:grid; grid-template-columns:1fr 1fr; gap:8px; border:none; margin:0; padding:0; min-width:0; }
-  .ef-seg--3{ grid-template-columns:repeat(3,1fr); }
-  .ef-seg legend{ font-size:.85rem; color:var(--ef-muted); margin-bottom:6px; padding:0; }
-  .ef-seg label{ position:relative; display:flex; flex-direction:column; gap:2px; border:1px solid var(--ef-line); border-radius:8px;
-    background:var(--ef-bg); padding:10px 12px; cursor:pointer; font-size:.9rem; color:var(--ef-ink); }
-  .ef-seg label small{ font-size:.72rem; color:var(--ef-muted); }
-  .ef-seg input{ position:absolute; opacity:0; pointer-events:none; }
-  .ef-seg label:has(input:checked){ border-color:var(--ef-accent); box-shadow:inset 0 0 0 1px var(--ef-accent); }
-  .ef-seg label[hidden]{ display:none; }
-  .ef-note{ font-size:.78rem; color:var(--ef-muted); margin:0; }
-  .ef-note a{ color:inherit; }
-  .ef-error{ display:none; color:var(--ef-error); font-size:.82rem; margin:0; }
-  .ef-btn{ font:inherit; font-weight:600; padding:15px 20px; border:none; border-radius:8px; background:var(--ef-accent); color:#fff; cursor:pointer; }
-  .ef-btn:disabled{ opacity:.5; cursor:progress; }
-  .ef-ok{ display:none; padding:16px; border:1px solid var(--ef-line); border-radius:8px; }
-  @media (max-width:480px){ .ef-seg--3{ grid-template-columns:1fr; } }
-</style>
-
-<form class="envio-form" id="envioForm" name="envio" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
-  <input type="hidden" name="form-name" value="envio">
-  <p hidden><label>No completar: <input name="bot-field"></label></p>
-  <!-- Campos que se mandan (mismo orden que MiCorreo). Se completan solos al enviar. -->
-  <input type="hidden" name="tipoEntrega"><input type="hidden" name="nombreApellido"><input type="hidden" name="provincia">
-  <input type="hidden" name="localidad"><input type="hidden" name="direccion"><input type="hidden" name="sucursal">
-  <input type="hidden" name="codigoPostal"><input type="hidden" name="email"><input type="hidden" name="codArea">
-  <input type="hidden" name="celular"><input type="hidden" name="observaciones"><input type="hidden" name="servicio">
-
-  <h3>Datos de envío · Correo Argentino</h3>
-
-  <fieldset class="ef-seg"><legend>¿Dónde lo recibís?</legend>
-    <label><input type="radio" name="ef-tipo" value="Domicilio" checked>A domicilio<small>Te lo lleva el cartero</small></label>
-    <label><input type="radio" name="ef-tipo" value="Sucursal">En sucursal<small>Lo retirás vos</small></label>
-  </fieldset>
-
-  <label class="ef-field">Nombre y apellido<input type="text" id="ef-nombre" autocomplete="name"></label>
-
-  <label class="ef-field">Provincia
-    <select id="ef-provincia" autocomplete="address-level1">
-      <option value="">Elegí tu provincia</option>
-      <option>CABA</option><option>Buenos Aires</option><option>Catamarca</option><option>Chaco</option><option>Chubut</option>
-      <option>Córdoba</option><option>Corrientes</option><option>Entre Ríos</option><option>Formosa</option><option>Jujuy</option>
-      <option>La Pampa</option><option>La Rioja</option><option>Mendoza</option><option>Misiones</option><option>Neuquén</option>
-      <option>Río Negro</option><option>Salta</option><option>San Juan</option><option>San Luis</option><option>Santa Cruz</option>
-      <option>Santa Fe</option><option>Santiago del Estero</option><option>Tierra del Fuego</option><option>Tucumán</option>
-    </select>
-  </label>
-
-  <div id="ef-domicilio" style="display:flex; flex-direction:column; gap:14px">
-    <div class="ef-row">
-      <label class="ef-field">Localidad<input type="text" id="ef-localidad" autocomplete="address-level2"></label>
-      <label class="ef-field">Código postal<input type="text" id="ef-cp" autocomplete="postal-code" inputmode="numeric" maxlength="8"></label>
-    </div>
-    <label class="ef-field">Calle y altura<input type="text" id="ef-calle" autocomplete="address-line1" placeholder="Ej: Av. Rivadavia 1234"></label>
-    <div class="ef-row">
-      <label class="ef-field">Piso (opcional)<input type="text" id="ef-piso" autocomplete="off"></label>
-      <label class="ef-field">Depto (opcional)<input type="text" id="ef-depto" autocomplete="off"></label>
-    </div>
-  </div>
-
-  <div id="ef-sucursal" style="display:none; flex-direction:column; gap:8px">
-    <label class="ef-field">Sucursal de Correo Argentino<input type="text" id="ef-suc" autocomplete="off" placeholder="Localidad y dirección de la sucursal"></label>
-    <p class="ef-note">Buscá la más cercana en el <a href="https://www.correoargentino.com.ar/formularios/sucursales" target="_blank" rel="noopener">buscador de sucursales</a>.</p>
-  </div>
-
-  <label class="ef-field">Email<input type="email" id="ef-email" autocomplete="email" inputmode="email"></label>
-
-  <div class="ef-row ef-row--area">
-    <label class="ef-field">Cód. área (sin 0)<input type="text" id="ef-area" autocomplete="tel-area-code" inputmode="numeric" maxlength="4" placeholder="11"></label>
-    <label class="ef-field">Celular (sin 15)<input type="tel" id="ef-cel" autocomplete="tel-local" inputmode="numeric" maxlength="8" placeholder="12345678"></label>
-  </div>
-
-  <fieldset class="ef-seg ef-seg--3" id="ef-servicio"><legend>Servicio PAQ.AR</legend>
-    <label><input type="radio" name="ef-serv" value="PAQ.AR Clásico" checked>Clásico<small>2 a 5 días hábiles</small></label>
-    <label><input type="radio" name="ef-serv" value="PAQ.AR Expreso">Expreso<small>1 a 3 días hábiles</small></label>
-    <label data-hoy><input type="radio" name="ef-serv" value="PAQ.AR Hoy">Hoy<small>En el día · CABA y GBA</small></label>
-  </fieldset>
-
-  <label class="ef-field" id="ef-obs-wrap">Observaciones (opcional)<textarea id="ef-obs" maxlength="200" placeholder="Ej: timbre B, entre calles, horario"></textarea></label>
-
-  <p class="ef-note">El costo del envío te lo pasamos según peso, destino y servicio antes de despachar.</p>
-  <p class="ef-error" id="ef-error" role="alert"></p>
-  <button type="submit" class="ef-btn" id="ef-btn">Enviar datos</button>
-</form>
-<div class="ef-ok" id="ef-ok"><b>¡Listo, recibimos tus datos de envío!</b><br>Te escribimos con el costo y el seguimiento.</div>
-
-<script>
-(function(){
-  var form = document.getElementById('envioForm');
-  if (!form) return;
-  var $ = function(id){ return document.getElementById(id); };
-  var val = function(id){ return $(id).value.trim(); };
-  var tipo = function(){ return form.querySelector('input[name="ef-tipo"]:checked').value; };
-
-  // Muestra domicilio o sucursal. PAQ.AR Hoy solo aparece a domicilio en CABA o Buenos Aires.
-  function actualizar(){
-    var dom = tipo() === 'Domicilio';
-    $('ef-domicilio').style.display = dom ? 'flex' : 'none';
-    $('ef-sucursal').style.display = dom ? 'none' : 'flex';
-    $('ef-obs-wrap').style.display = dom ? 'flex' : 'none';
-    var hoyOk = dom && (val('ef-provincia') === 'CABA' || val('ef-provincia') === 'Buenos Aires');
-    var hoy = form.querySelector('[data-hoy]');
-    hoy.hidden = !hoyOk;
-    $('ef-servicio').classList.toggle('ef-seg--3', hoyOk);
-    if (!hoyOk && hoy.querySelector('input').checked) form.querySelector('input[name="ef-serv"]').checked = true;
-  }
-  form.querySelectorAll('input[name="ef-tipo"]').forEach(function(r){ r.addEventListener('change', actualizar); });
-  $('ef-provincia').addEventListener('change', actualizar);
-  actualizar();
-
-  function error(msg, id){ var e = $('ef-error'); e.textContent = msg; e.style.display = 'block'; if (id) $(id).focus(); }
-
-  form.addEventListener('submit', async function(ev){
-    ev.preventDefault();
-    var dom = tipo() === 'Domicilio';
-    var obligatorios = ['ef-nombre','ef-provincia','ef-email','ef-area','ef-cel'].concat(dom ? ['ef-localidad','ef-cp','ef-calle'] : ['ef-suc']);
-    var vacio = obligatorios.filter(function(id){ return !val(id); })[0];
-    if (vacio) return error('Completá todos los campos para continuar.', vacio);
-    if (!/^\S+@\S+\.\S+$/.test(val('ef-email'))) return error('Revisá el email.', 'ef-email');
-    var area = val('ef-area').replace(/\D/g,'').replace(/^0+/,'');
-    var cel = val('ef-cel').replace(/\D/g,'').replace(/^15/,'');
-    // En Argentina, código de área + número suman 10 dígitos (ej: 11 + 12345678).
-    if (area.length < 2 || area.length > 4 || (area + cel).length !== 10)
-      return error('Revisá el celular: código de área sin 0 y número sin 15, que sumen 10 dígitos (ej: 11 y 12345678).', 'ef-area');
-    var cp = val('ef-cp').replace(/\s/g,'').toUpperCase();
-    if (dom && !/^[A-Z]?\d{4}[A-Z]{0,3}$/.test(cp)) return error('Revisá el código postal (ej: 1406 o C1406ABC).', 'ef-cp');
-    $('ef-error').style.display = 'none';
-
-    var piso = val('ef-piso'), depto = val('ef-depto');
-    var datos = {
-      tipoEntrega: tipo(), nombreApellido: val('ef-nombre'), provincia: val('ef-provincia'),
-      localidad: dom ? val('ef-localidad') : '',
-      direccion: dom ? val('ef-calle') + (piso ? ', piso ' + piso : '') + (depto ? ', depto ' + depto : '') : '',
-      sucursal: dom ? '' : val('ef-suc'),
-      codigoPostal: dom ? cp : '', email: val('ef-email'), codArea: area, celular: cel,
-      observaciones: dom ? val('ef-obs') : '',
-      servicio: form.querySelector('input[name="ef-serv"]:checked').value
-    };
-    Object.keys(datos).forEach(function(k){ form.querySelector('input[name="' + k + '"]').value = datos[k]; });
-
-    var btn = $('ef-btn'); btn.disabled = true; btn.textContent = 'Enviando...';
-    var body = new URLSearchParams({ 'form-name': 'envio' });
-    Object.keys(datos).forEach(function(k){ body.append(k, datos[k]); });
-    try {
-      var res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
-      if (!res.ok) throw new Error(res.status);
-      form.style.display = 'none'; $('ef-ok').style.display = 'block';
-    } catch (e) {
-      btn.disabled = false; btn.textContent = 'Enviar datos';
-      error('No se pudo enviar. Probá de nuevo en un rato.');
-    }
-  });
-})();
-</script>
-<!-- ================== FIN FORMULARIO DE ENVÍOS ================== -->
 </main></template>
 <template id="tpl-sobre"><main>
   <section class="section section--dark manifesto" style="padding:80px 0">
@@ -847,10 +702,10 @@ window.SS_CONFIG = {
   // Alias para transferencias (se muestra en el checkout y en el pedido)
   aliasTransferencia: "julirincon",
 
-  // Envíos: el costo se suma al total en el checkout.
+  // Envíos: el costo del envío NO se suma al total; se informa por WhatsApp según peso, destino y servicio.
   envioGratisDesde: 0, // poné 0 si no hay envío gratis
   metodosEnvio: [
-    { id: "correo", nombre: "Correo Argentino", precio: 6500 }
+    { id: "correo", nombre: "Correo Argentino (PAQ.AR)", precio: 0, aCoordinar: true } // el costo no se cobra en la web: se informa por WhatsApp
   ],
 
   metodosPago: [
@@ -1610,9 +1465,8 @@ window.SS_PH = {
   function totals() {
     const c = getCart();
     const sub = subtotal(c);
-    const envioSel = $('input[name="envio"]:checked');
     const pagoSel = $('input[name="pago"]:checked');
-    const envio = C.metodosEnvio.find(m => m.id === envioSel?.value);
+    const envio = C.metodosEnvio[0];
     const pago = C.metodosPago.find(m => m.id === pagoSel?.value);
     let costoEnvio = envio ? envio.precio : 0;
     if (C.envioGratisDesde && sub >= C.envioGratisDesde) costoEnvio = 0;
@@ -1632,39 +1486,80 @@ window.SS_PH = {
     $("#summaryLines").innerHTML = `
       <div><span>Subtotal</span><span>${money(t.sub)}</span></div>
       ${t.desc ? `<div class="disc"><span>Transferencia −${C.descuentoTransferencia}%</span><span>−${money(t.desc)}</span></div>` : ""}
-      <div><span>Envío</span><span>${!t.envio ? "Elegí un método" : t.costoEnvio === 0 ? "Gratis" : money(t.costoEnvio)}</span></div>`;
+      <div><span>Envío</span><span>${t.envio && t.envio.aCoordinar ? "A coordinar" : t.costoEnvio === 0 ? "Gratis" : money(t.costoEnvio)}</span></div>`;
     $("#summaryTotal").textContent = money(t.total);
   }
   function initCheckout() {
     const sub = subtotal(getCart());
-    $("#envioOpts").innerHTML = C.metodosEnvio.map((m, i) => {
-      const gratis = C.envioGratisDesde && sub >= C.envioGratisDesde && m.precio > 0;
-      return `<label class="option"><input type="radio" name="envio" value="${m.id}" required ${i === 0 ? "checked" : ""}><span class="option__name">${esc(m.nombre)}</span><span class="option__price">${m.precio === 0 || gratis ? "Gratis" : money(m.precio)}</span></label>`;
-    }).join("");
     $("#pagoOpts").innerHTML = C.metodosPago.map((m, i) => `<label class="option"><input type="radio" name="pago" value="${m.id}" required ${i === 0 ? "checked" : ""}><span class="option__name">${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? `<small>${C.descuentoTransferencia}% OFF sobre los productos${C.aliasTransferencia ? ` · Alias: <b>${esc(C.aliasTransferencia)}</b>` : ""}</small>` : ""}</span></label>`).join("");
     $("#checkoutForm").addEventListener("change", renderSummary);
     renderSummary();
     if (!$("#checkoutForm")) return; // carrito vacío
 
+    // --- Formulario de envío (Correo Argentino / PAQ.AR) ---
+    const form = $("#checkoutForm");
+    const val = id => $("#" + id).value.trim();
+    const tipo = () => form.querySelector('input[name="ef-tipo"]:checked').value;
+    function actualizarEnvio() {
+      const dom = tipo() === "Domicilio";
+      $("#ef-domicilio").style.display = dom ? "grid" : "none";
+      $("#ef-sucursal").style.display = dom ? "none" : "grid";
+      $("#ef-obs-wrap").style.display = dom ? "grid" : "none";
+      const hoyOk = dom && (val("ef-provincia") === "CABA" || val("ef-provincia") === "Buenos Aires");
+      const hoy = form.querySelector("[data-hoy]");
+      hoy.hidden = !hoyOk;
+      if (!hoyOk && hoy.querySelector("input").checked) form.querySelector('input[name="ef-serv"]').checked = true;
+    }
+    form.querySelectorAll('input[name="ef-tipo"]').forEach(r => r.addEventListener("change", actualizarEnvio));
+    $("#ef-provincia").addEventListener("change", actualizarEnvio);
+    actualizarEnvio();
+    $("#coordinaEntrega").href = waLink("Hola! Quiero coordinar la entrega de mi pedido de SS ACCESORIOS.");
+    const mostrarError = (msg, id) => { const el = $("#ef-error"); el.textContent = msg; el.style.display = "block"; if (id) $("#" + id).focus(); };
+
     $("#checkoutForm").addEventListener("submit", async e => {
       e.preventDefault();
       const f = e.target;
+      const dom = tipo() === "Domicilio";
+      const obligatorios = ["ef-nombre", "ef-email", "ef-area", "ef-cel", "ef-provincia"].concat(dom ? ["ef-localidad", "ef-cp", "ef-calle"] : ["ef-suc"]);
+      const vacio = obligatorios.filter(id => !val(id))[0];
+      if (vacio) return mostrarError("Completá todos los campos para continuar.", vacio);
+      if (!/^\S+@\S+\.\S+$/.test(val("ef-email"))) return mostrarError("Revisá el email.", "ef-email");
+      const area = val("ef-area").replace(/\D/g, "").replace(/^0+/, "");
+      const cel = val("ef-cel").replace(/\D/g, "").replace(/^15/, "");
+      // En Argentina, código de área + número suman 10 dígitos (ej: 11 + 12345678).
+      if (area.length < 2 || area.length > 4 || (area + cel).length !== 10)
+        return mostrarError("Revisá el celular: código de área sin 0 y número sin 15, que sumen 10 dígitos (ej: 11 y 12345678).", "ef-area");
+      const cp = val("ef-cp").replace(/\s/g, "").toUpperCase();
+      if (dom && !/^[A-Z]?\d{4}[A-Z]{0,3}$/.test(cp)) return mostrarError("Revisá el código postal (ej: 1406 o C1406ABC).", "ef-cp");
+      $("#ef-error").style.display = "none";
+
+      const piso = val("ef-piso"), depto = val("ef-depto");
+      const d = {
+        tipoEntrega: tipo(), nombreApellido: val("ef-nombre"), provincia: val("ef-provincia"),
+        localidad: dom ? val("ef-localidad") : "",
+        direccion: dom ? val("ef-calle") + (piso ? ", piso " + piso : "") + (depto ? ", depto " + depto : "") : "",
+        sucursal: dom ? "" : val("ef-suc"),
+        codigoPostal: dom ? cp : "", email: val("ef-email"), codArea: area, celular: cel,
+        observaciones: dom ? val("ef-obs") : "",
+        servicio: form.querySelector('input[name="ef-serv"]:checked').value
+      };
+      const notas = (f.querySelector('[name="notas"]').value || "").trim();
+      Object.keys(d).forEach(k => { f.querySelector('[name="' + k + '"]').value = d[k]; });
       const t = totals();
       if (!t.c.length) return;
-      const d = Object.fromEntries(new FormData(f));
       const nro = "SS-" + Date.now().toString(36).toUpperCase().slice(-6);
       const lineas = t.c.map(i => { const p = byId(i.id); return `• ${p.nombre} x${i.qty} — ${money(p.precio * i.qty)}`; }).join("\n");
       const detalle =
 `PEDIDO ${nro}
 ${lineas}
 Subtotal: ${money(t.sub)}${t.desc ? `\nDescuento transferencia: −${money(t.desc)}` : ""}
-Envío (${t.envio.nombre}): ${t.costoEnvio ? money(t.costoEnvio) : "Gratis"}
-TOTAL: ${money(t.total)}
+TOTAL PRODUCTOS: ${money(t.total)}
+Envío (Correo Argentino · ${d.servicio}): a coordinar, se informa por WhatsApp
 Pago: ${t.pago.nombre}${t.pago.id === "transferencia" && C.aliasTransferencia ? ` (alias ${C.aliasTransferencia})` : ""}
 
-${d.nombre} ${d.apellido}
-${d.email} · ${d.telefono}
-${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas: ${d.notas}` : ""}`;
+${d.nombreApellido}
+${d.email} · (${d.codArea}) ${d.celular}
+${dom ? `Entrega a domicilio: ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.codigoPostal})${d.observaciones ? `\nObs. envío: ${d.observaciones}` : ""}` : `Entrega en sucursal: ${d.sucursal}, ${d.provincia}`}${notas ? `\nNotas: ${notas}` : ""}`;
 
       f.querySelector('[name="pedido"]').value = nro;
       f.querySelector('[name="detalle"]').value = detalle;
@@ -1673,7 +1568,7 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
 
       // Netlify Forms: el pedido queda registrado en el panel de Netlify (y te llega por mail si lo activás)
       try {
-        await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(new FormData(f)).toString() });
+        await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: (() => { const p = new URLSearchParams(new FormData(f)); p.delete("ef-tipo"); p.delete("ef-serv"); return p.toString(); })() });
       } catch (err) { /* si falla (ej. probando local), igual seguimos por WhatsApp */ }
 
       saveCart([]);
@@ -1684,14 +1579,15 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
         <div class="success">
           <span class="mono" style="color:var(--silver-2)">Pedido ${nro}</span>
           <span class="display">Señal<br>recibida</span>
-          <p>¡Gracias, ${esc(d.nombre)}! Tu pedido quedó registrado. Para confirmarlo, seguí estos pasos:</p>
+          <p>¡Gracias, ${esc(d.nombreApellido.split(" ")[0])}! Tu pedido quedó registrado. Para confirmarlo, seguí estos pasos:</p>
           ${esTransf ? `<ol style="list-style:none;width:100%;text-align:left;border-bottom:1px solid var(--line)">
-            ${paso(1, "Transferí " + money(t.total), `Al alias <b style="font-family:var(--f-mono);font-size:16px;color:var(--black)">${esc(C.aliasTransferencia)}</b>`)}
+            ${paso(1, "Transferí " + money(t.total), `<small style="display:block;margin-bottom:2px">Es el total de los productos. El envío se abona aparte: te pasamos el costo por WhatsApp.</small>Al alias <b style="font-family:var(--f-mono);font-size:16px;color:var(--black)">${esc(C.aliasTransferencia)}</b>`)}
             ${paso(2, "Enviá el pedido por WhatsApp", "Tocá el botón de abajo: el mensaje ya está armado con todos tus datos.")}
             ${paso(3, "Adjuntá el comprobante", "En ese mismo chat mandanos la captura o el PDF del comprobante de la transferencia.")}
           </ol>
-          <p style="font-size:13.5px;background:var(--paper);padding:12px 14px;width:100%;text-align:left;border-left:3px solid var(--red)"><b>Importante:</b> sin el comprobante de transferencia no podemos confirmar ni despachar tu pedido.</p>` : `<p style="font-family:var(--f-mono);font-size:22px;font-weight:700">TOTAL ${money(t.total)}</p>`}
+          <p style="font-size:13.5px;background:var(--paper);padding:12px 14px;width:100%;text-align:left;border-left:3px solid var(--red)"><b>Importante:</b> sin el comprobante de transferencia no podemos confirmar ni despachar tu pedido.</p>` : `<p style="font-family:var(--f-mono);font-size:22px;font-weight:700">TOTAL ${money(t.total)}</p><p style="font-size:13.5px">El envío se abona aparte: te pasamos el costo por WhatsApp.</p>`}
           <a class="btn btn--block" href="${wa}" target="_blank" rel="noopener">Enviar pedido por WhatsApp <span class="arrow">→</span></a>
+          <a class="btn btn--ghost btn--block" href="${waLink("Hola! Quiero coordinar la entrega de mi pedido " + nro + ".")}" target="_blank" rel="noopener">Coordiná tu entrega</a>
           <a class="mono" href="#/" style="color:var(--silver-2);padding:10px">Volver al inicio</a>
         </div>`;
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1700,7 +1596,7 @@ ${d.direccion}, ${d.localidad}, ${d.provincia} (CP ${d.cp})${d.notas ? `\nNotas:
 
   /* ---------- SOBRE ---------- */
   function initAbout() {
-    $("#envioList").innerHTML = C.metodosEnvio.map(m => `<li>${esc(m.nombre)} — ${m.precio ? money(m.precio) : "sin cargo"}</li>`).join("") +
+    $("#envioList").innerHTML = C.metodosEnvio.map(m => `<li>${esc(m.nombre)} — ${m.aCoordinar ? "el costo te lo pasamos por WhatsApp según peso, destino y servicio" : m.precio ? money(m.precio) : "sin cargo"}</li>`).join("") +
       (C.envioGratisDesde ? `<li><b style="color:var(--white)">Envío gratis desde ${money(C.envioGratisDesde)}</b></li>` : "");
     $("#pagoList").innerHTML = C.metodosPago.map(m => `<li>${esc(m.nombre)}${m.descuento && C.descuentoTransferencia ? ` — ${C.descuentoTransferencia}% OFF` : ""}${m.id === "transferencia" && C.aliasTransferencia ? ` · Alias: ${esc(C.aliasTransferencia)}` : ""}</li>`).join("") +
       (C.cuotasSinInteres ? `<li>Hasta ${C.cuotasSinInteres} cuotas sin interés</li>` : "");
