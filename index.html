@@ -726,8 +726,7 @@ window.SS_CONFIG = {
        fotos de ejemplo = "ph:..."  |  fotos reales = link ("https://...jpg")
        o el nombre de la foto si la subís al repo ("black-heart.jpg")
    - stock: 0 = AGOTADO  ·  bestSeller: true = va a BEST SELLERS
-   - nuevo: true = va a NOVEDADES  ·  vendidos / fecha: para ordenar
-   - etiquetaNew: true = muestra la etiqueta NEW en la tarjeta (independiente de NOVEDADES)
+   - nuevo: true = muestra la etiqueta NEW y va a NOVEDADES (hoy ninguno)  ·  vendidos / fecha: para ordenar
    ================================================================= */
 window.SS_PRODUCTS = [
   {
@@ -739,7 +738,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con un triángulo grande calado. Statement y geométrico.",
     imagenes: ["ph:collar-missing"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-wired",
@@ -750,7 +749,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con dije de rayo. Pura energía rock.",
     imagenes: ["ph:collar-wired"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-hidden",
@@ -761,7 +760,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con argolla central y caída en Y.",
     imagenes: ["ph:collar-hidden"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-locked",
@@ -772,7 +771,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Doble capa: cadena de eslabones con mosquetón, cadenita de bolitas y candado colgante.",
     imagenes: ["ph:collar-locked"],
-    stock: 5, bestSeller: true, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: true, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-closed",
@@ -783,7 +782,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Doble cadena: eslabones rolo y cadena de bolitas, con cierre de argolla a la vista.",
     imagenes: ["ph:collar-closed"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-404",
@@ -794,7 +793,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones gruesos con dijes de estrella, llave, pluma, alas y cruz. La pieza más statement de la colección.",
     imagenes: ["ph:collar-404"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-id",
@@ -805,7 +804,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena snake plateada con nudo. Minimal, larga y con mucho movimiento.",
     imagenes: ["ph:collar-id"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-wings",
@@ -816,7 +815,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena fina plateada con dije de alas. Delicado pero con actitud.",
     imagenes: ["ph:collar-wings"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-01",
@@ -827,7 +826,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo plateado en forma de alfiler de gancho. Punk, minimal y con actitud.",
     imagenes: ["ph:anillo-01"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-02",
@@ -838,7 +837,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo ancho de franjas plateadas con textura martillada. Pesado, llamativo y bien rock.",
     imagenes: ["ph:anillo-02"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-03",
@@ -849,7 +848,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo plateado ancho con textura martillada. Brilla con cada movimiento.",
     imagenes: ["ph:anillo-03"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-04",
@@ -860,7 +859,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de metal fundido con formas irregulares. Una pieza escultural, distinta a todo.",
     imagenes: ["ph:anillo-04"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-05",
@@ -871,7 +870,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo triple: dos bandas finas de bolitas y una de esferas al centro. Se ve como un stack de tres.",
     imagenes: ["ph:anillo-05"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-06",
@@ -882,7 +881,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo ancho abierto de muchas bandas finas cruzadas, algunas lisas y otras texturadas.",
     imagenes: ["ph:anillo-06"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-07",
@@ -893,7 +892,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo abierto de tres bandas cruzadas con detalle enroscado. Liviano y distinto.",
     imagenes: ["ph:anillo-07"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-08",
@@ -904,7 +903,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de eslabones tipo cadena con textura trenzada. Rock y minimal a la vez.",
     imagenes: ["ph:anillo-08"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-09",
@@ -915,7 +914,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo con óvalo hueco tipo sello. Simple, geométrico y fácil de combinar.",
     imagenes: ["ph:anillo-09"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-10",
@@ -926,7 +925,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo abierto de aro fino que se cruza en espiral. Pulido y brillante.",
     imagenes: ["ph:anillo-10"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-11",
@@ -937,7 +936,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de forma orgánica, como metal fundido con huecos. Una pieza escultural.",
     imagenes: ["ph:anillo-11"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-12",
@@ -948,7 +947,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo con óvalo y barra cruzada, inspirado en los cierres de cadena.",
     imagenes: ["ph:anillo-12"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-13",
@@ -959,7 +958,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo ancho con relieve de rayas verticales. Un básico con textura.",
     imagenes: ["ph:anillo-13"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-14",
@@ -970,7 +969,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de varias bandas que se cruzan entre sí. Parece un stack en una sola pieza.",
     imagenes: ["ph:anillo-14"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "anillo-15",
@@ -981,7 +980,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo calado de eslabones redondos y cuadrados. Liviano y con onda Y2K.",
     imagenes: ["ph:anillo-15"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-09-29"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-09-29"
   },
   {
     id: "collar-signal",
@@ -992,7 +991,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Doble cadena de eslabones con un dije de estrella. Capas, brillo y actitud.",
     imagenes: ["ph:collar-signal"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-lovesick",
@@ -1003,7 +1002,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con corazones grabados colgando. Romántico y oscuro.",
     imagenes: ["ph:collar-lovesick"],
-    stock: 5, bestSeller: false, nuevo: true, etiquetaNew: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-sinner",
@@ -1014,7 +1013,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con cruces colgantes. Gótico y sin culpa.",
     imagenes: ["ph:collar-sinner"],
-    stock: 5, bestSeller: false, nuevo: true, etiquetaNew: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-static",
@@ -1025,7 +1024,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con grillete como cierre. Industrial y minimal.",
     imagenes: ["ph:collar-static"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "anillo-17",
@@ -1036,7 +1035,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo de serpiente de doble cabeza con textura de escamas.",
     imagenes: ["ph:anillo-17", "ph:anillo-17b"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "anillo-18",
@@ -1047,7 +1046,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo ancho de varias líneas finas superpuestas.",
     imagenes: ["ph:anillo-18"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "anillo-19",
@@ -1058,7 +1057,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo calado con florcitas y un remate en espiral.",
     imagenes: ["ph:anillo-19"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "anillo-20",
@@ -1069,7 +1068,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo grueso en espiral, plateado y pulido. Liso y llamativo.",
     imagenes: ["ph:anillo-20"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-katherine",
@@ -1080,7 +1079,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Gargantilla de cordón negro con un corazón negro brillante. Se ata con moño y bolitas plateadas.",
     imagenes: ["ph:collar-katherine"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-elena",
@@ -1091,7 +1090,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cordón negro con un corazón rojo translúcido. Se puede usar doble.",
     imagenes: ["ph:collar-elena"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-moss",
@@ -1102,7 +1101,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Cadena de eslabones con estrellas, cristales y cadenitas colgantes. Brillo en capas.",
     imagenes: ["ph:collar-moss"],
-    stock: 0, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 0, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-rebel",
@@ -1113,7 +1112,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Chapas plateadas con púas y una estrella al centro, con cadena regulable.",
     imagenes: ["ph:collar-rebel"],
-    stock: 5, bestSeller: false, nuevo: true, etiquetaNew: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "collar-karma",
@@ -1124,7 +1123,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Collar de alambre de púas plateado. Punk y directo.",
     imagenes: ["ph:collar-karma"],
-    stock: 5, bestSeller: false, nuevo: true, etiquetaNew: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   },
   {
     id: "anillo-16",
@@ -1135,7 +1134,7 @@ window.SS_PRODUCTS = [
     medidas: "",
     descripcion: "Anillo en forma de hebilla con dos cristales.",
     imagenes: ["ph:anillo-16"],
-    stock: 5, bestSeller: false, nuevo: true, vendidos: 0, fecha: "2026-10-13"
+    stock: 5, bestSeller: false, nuevo: false, vendidos: 0, fecha: "2026-10-13"
   }
 ];
 </script>
@@ -1463,7 +1462,7 @@ window.SS_PH = {
     const out = p.stock <= 0;
     const badges = [
       out ? '<span class="badge badge--dark">Sold out</span>' : "",
-      p.etiquetaNew && !out ? '<span class="badge">New</span>' : "",
+      p.nuevo && !out ? '<span class="badge">New</span>' : "",
       p.bestSeller && !out ? '<span class="badge badge--dark">★ Best</span>' : "",
       p.stock > 0 && p.stock <= 3 ? '<span class="badge badge--red">Últimos</span>' : ""
     ].join("");
@@ -1506,8 +1505,9 @@ window.SS_PH = {
   /* ---------- HOME ---------- */
   function initHome() {
     fitHero();
-    const nuevos = P.filter(p => p.stock > 0).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 4);
+    const nuevos = P.filter(p => p.nuevo && p.stock > 0).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 4);
     $("#homeNew").innerHTML = nuevos.map(card).join("");
+    if (!nuevos.length) $("#homeNew").closest("section").style.display = "none";
     const best = P.filter(p => p.bestSeller && p.stock > 0).sort((a, b) => b.vendidos - a.vendidos).slice(0, 4);
     $("#homeBest").innerHTML = best.map(card).join("");
     if (!best.length) $("#homeBest").closest("section").hidden = true;
@@ -1556,6 +1556,7 @@ window.SS_PH = {
       $("#resultCount").textContent = `${list.length} ${list.length === 1 ? "producto" : "productos"}`;
       $("#shopGrid").innerHTML = list.map(card).join("");
       $("#shopEmpty").hidden = list.length > 0;
+      $("#shopEmpty p").textContent = (state.cat === "novedades" && !P.some(p => p.nuevo)) ? "NO HAY NOVEDADES POR AHORA." : "No encontramos productos con esos filtros.";
       observeReveal();
 
       const sp = new URLSearchParams();
