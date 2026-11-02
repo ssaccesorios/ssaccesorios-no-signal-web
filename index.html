@@ -70,6 +70,11 @@ input, select, textarea { font: inherit; }
 .topbar__track span { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; }
 .topbar__track .dot { color: var(--red); }
 @keyframes marquee { to { transform: translateX(-50%); } }
+.promo-banner { display: block; background: var(--white); color: var(--black); text-align: center; font-family: var(--f-mono); font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 7px var(--gutter); border-bottom: 1px solid var(--line); }
+.has-promo .hero { height: calc(100svh - var(--header-h) - 60px); }
+.header__nav a[data-key="cyber"] { display: none; }
+@media (min-width: 1280px) { .header__nav a[data-key="cyber"] { display: inline; } .has-promo .header__nav { gap: 18px; } .has-promo .header__nav a { white-space: nowrap; } }
+.price__old { color: var(--silver-2); font-weight: 400; text-decoration: line-through; margin-right: 6px; }
 
 /* ---------- Header ---------- */
 .header {
@@ -515,6 +520,7 @@ html, body { overflow-x: clip; }
         <button class="chip" data-cat="anillos">Anillos</button>
         <button class="chip" data-cat="novedades">Nuevos</button>
         <button class="chip" data-cat="best-sellers">★ Best</button>
+        <button class="chip" data-cat="cyber" hidden>CYBER SS</button>
         <div class="select-wrap">
           <label class="sr-only" for="sortSel">Ordenar</label>
           <select id="sortSel">
@@ -698,6 +704,19 @@ window.SS_CONFIG = {
 
   // Descuento por transferencia (%). Poné 0 para ocultarlo.
   descuentoTransferencia: 10,
+
+  // PROMO CYBER SS — descuento automático por fecha. Los precios originales (precio: ...) NO se tocan:
+  // la web calcula el precio con descuento solo mientras la promo está activa y vuelve sola al precio original al terminar.
+  //   activa: false  = apaga la promo por completo
+  //   inicio / fin   = fecha y hora de Argentina (-03:00). fin: null = sin fecha de finalización (se define cuando se confirme)
+  //   categorias     = a qué categorías se aplica (hoy solo collares)
+  promo: {
+    activa: true,
+    descuento: 10,                       // % OFF
+    categorias: ["collares"],
+    inicio: "2026-11-02T00:00:00-03:00",
+    fin: null                            // ej: "2026-11-04T23:59:59-03:00"
+  },
 
   // Alias para transferencias (se muestra en el checkout y en el pedido)
   aliasTransferencia: "julirincon",
@@ -1236,6 +1255,16 @@ window.SS_PH = {
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const byId = id => P.find(p => p.id === id);
+  /* ---------- Promo CYBER SS (precio efectivo según fecha) ---------- */
+  const promoMs = k => { const v = C.promo && C.promo[k]; const t = v ? Date.parse(v) : NaN; return isNaN(t) ? null : t; };
+  const promoActiva = () => {
+    const pr = C.promo; if (!pr || !pr.activa || !(pr.descuento > 0)) return false;
+    const now = Date.now(), i = promoMs("inicio"), f = promoMs("fin");
+    return (i === null || now >= i) && (f === null || now < f);
+  };
+  const enPromo = p => promoActiva() && (C.promo.categorias || []).includes(p.categoria);
+  const pv = p => enPromo(p) ? Math.round(p.precio * (1 - C.promo.descuento / 100)) : p.precio;
+  const precioHTML = p => enPromo(p) ? `<s class="price__old">${money(p.precio)}</s> ${money(pv(p))}` : money(p.precio);
   let params = new URLSearchParams();
   let page = "home";
   const IMG = s => (s && s.startsWith("ph:") ? (window.SS_PH[s.slice(3)] || "") : s);
@@ -1263,18 +1292,21 @@ window.SS_PH = {
 
   /* ---------- Layout compartido ---------- */
   function renderChrome() {
+    const nav = promoActiva() ? [...NAV.slice(0, 5), ["CYBER SS", "#/shop?cat=cyber", "cyber"], ...NAV.slice(5)] : NAV;
+    document.body.classList.toggle("has-promo", promoActiva());
     const top = `ENVÍOS A TODO EL PAÍS <span class="dot">●</span> ${C.descuentoTransferencia ? C.descuentoTransferencia + "% OFF POR TRANSFERENCIA" : ""} <span class="dot">●</span> @${C.instagram}`;
     const topItems = Array(6).fill(`<span>${top}</span>`).join("");
 
     const header = `
       <div class="topbar" aria-label="Información"><div class="topbar__track">${topItems}</div></div>
+      ${promoActiva() ? `<a class="promo-banner" href="#/shop?cat=cyber">${C.promo.descuento}% OFF EN COLLARES</a>` : ""}
       <header class="header">
         <div class="container header__inner">
           <div class="header__left">
             <button class="icon-btn burger" data-open="menu" aria-label="Abrir menú">${ICON.menu}</button>
             <button class="icon-btn" data-open="search" aria-label="Buscar">${ICON.search}</button>
             <nav class="header__nav" aria-label="Principal">
-              ${NAV.slice(1, 5).map(([t, h, k]) => `<a href="${h}" data-key="${k}">${t}</a>`).join("")}
+              ${nav.slice(1, promoActiva() ? 6 : 5).map(([t, h, k]) => `<a href="${h}" data-key="${k}">${t}</a>`).join("")}
             </nav>
           </div>
           <a href="#/" class="logo" aria-label="Sin Señal - inicio">
@@ -1294,7 +1326,7 @@ window.SS_PH = {
         <div class="drawer__head"><span class="drawer__title">Menú</span><button class="icon-btn" data-close aria-label="Cerrar">${ICON.close}</button></div>
         <div class="drawer__body">
           <ul class="menu-links">
-            ${NAV.map(([t, h], i) => `<li><a href="${h}">${t}<span>0${i + 1}</span></a></li>`).join("")}
+            ${nav.map(([t, h], i) => `<li><a href="${h}">${t}<span>0${i + 1}</span></a></li>`).join("")}
           </ul>
         </div>
         <div class="menu-foot mono">
@@ -1402,7 +1434,7 @@ window.SS_PH = {
     if (!q) { box.innerHTML = ""; return; }
     const res = P.filter(p => norm(p.nombre + " " + p.categoria + " " + p.descripcion).includes(q)).slice(0, 6);
     box.innerHTML = res.length
-      ? res.map(p => `<a class="search-item" href="#/producto?id=${p.id}"><img src="${IMG(p.imagenes[0])}" alt=""><div><div class="search-item__name">${esc(p.nombre)}</div><div class="mono" style="color:var(--silver-2)">${p.categoria} · ${money(p.precio)}</div></div></a>`).join("")
+      ? res.map(p => `<a class="search-item" href="#/producto?id=${p.id}"><img src="${IMG(p.imagenes[0])}" alt=""><div><div class="search-item__name">${esc(p.nombre)}</div><div class="mono" style="color:var(--silver-2)">${p.categoria} · ${precioHTML(p)}</div></div></a>`).join("")
       : `<p class="search-empty mono">Sin señal para "${esc(q)}". Probá con otra palabra.</p>`;
   }
 
@@ -1432,7 +1464,7 @@ window.SS_PH = {
     renderCart();
     if (page === "checkout") renderSummary();
   }
-  const subtotal = c => c.reduce((s, i) => s + byId(i.id).precio * i.qty, 0);
+  const subtotal = c => c.reduce((s, i) => s + pv(byId(i.id)) * i.qty, 0);
   function updateCount(bump) {
     const n = getCart().reduce((s, i) => s + i.qty, 0);
     const el = $("#cartCount"); if (!el) return;
@@ -1458,8 +1490,8 @@ window.SS_PH = {
       return `<li class="cart-item">
         <a href="#/producto?id=${p.id}"><img src="${IMG(p.imagenes[0])}" alt="${esc(p.nombre)}"></a>
         <div>
-          <div style="display:flex;justify-content:space-between;gap:8px"><span class="cart-item__name">${esc(p.nombre)}</span><span class="price" style="font-size:13px">${money(p.precio * i.qty)}</span></div>
-          <div class="cart-item__meta">${p.categoria === "collares" ? "Collar" : "Anillo"} · ${money(p.precio)} c/u</div>
+          <div style="display:flex;justify-content:space-between;gap:8px"><span class="cart-item__name">${esc(p.nombre)}</span><span class="price" style="font-size:13px">${money(pv(p) * i.qty)}</span></div>
+          <div class="cart-item__meta">${p.categoria === "collares" ? "Collar" : "Anillo"} · ${money(pv(p))} c/u</div>
           <div class="cart-item__row">
             <div class="qty qty--sm"><button data-q="${p.id}" data-d="-1" aria-label="Restar">−</button><span>${i.qty}</span><button data-q="${p.id}" data-d="1" aria-label="Sumar">+</button></div>
             <button class="cart-item__remove" data-rm="${p.id}">Eliminar</button>
@@ -1500,6 +1532,7 @@ window.SS_PH = {
       out ? '<span class="badge badge--dark">Sold out</span>' : "",
       p.nuevo && !out ? '<span class="badge">New</span>' : "",
       p.bestSeller && !out ? '<span class="badge badge--dark">★ Best</span>' : "",
+      enPromo(p) && !out ? `<span class="badge badge--red">${C.promo.descuento}% OFF</span>` : "",
       p.stock > 0 && p.stock <= 3 ? '<span class="badge badge--red">Últimos</span>' : ""
     ].join("");
     return `<article class="card reveal ${out ? "sold-out" : ""}">
@@ -1511,8 +1544,8 @@ window.SS_PH = {
       <div class="card__body">
         <span class="card__cat mono">${p.categoria}</span>
         <a href="#/producto?id=${p.id}" class="card__name">${esc(p.nombre)}</a>
-        <span class="price">${money(p.precio)}</span>
-        ${cuotasTxt(p.precio)}
+        <span class="price">${precioHTML(p)}</span>
+        ${cuotasTxt(pv(p))}
         ${out ? `<button class="btn btn--ghost card__btn" disabled>Agotado</button>` : `<button class="btn card__btn" data-add="${p.id}">Comprar</button>`}
       </div>
     </article>`;
@@ -1555,8 +1588,9 @@ window.SS_PH = {
 
   /* ---------- SHOP ---------- */
   function initShop() {
-    const TITLES = { todo: "Shop", collares: "Collares", anillos: "Anillos", novedades: "Novedades", "best-sellers": "Best Sellers" };
-    const maxPrice = Math.max(...P.map(p => p.precio));
+    const TITLES = { todo: "Shop", collares: "Collares", anillos: "Anillos", novedades: "Novedades", "best-sellers": "Best Sellers", ...(promoActiva() ? { cyber: "CYBER SS" } : {}) };
+    const cyberChip = $('.chip[data-cat="cyber"]'); if (cyberChip) cyberChip.hidden = !promoActiva();
+    const maxPrice = Math.max(...P.map(pv));
     const state = {
       cat: TITLES[params.get("cat")] ? params.get("cat") : "todo",
       sort: params.get("cat") === "best-sellers" ? "vendidos" : params.get("cat") === "novedades" ? "nuevos" : "relevancia",
@@ -1564,21 +1598,22 @@ window.SS_PH = {
       q: params.get("q") || ""
     };
     const range = $("#priceRange");
-    range.max = maxPrice; range.min = Math.min(...P.map(p => p.precio)); range.step = 500; range.value = maxPrice;
+    range.max = maxPrice; range.min = Math.min(...P.map(pv)); range.step = 500; range.value = maxPrice;
     $("#sortSel").value = state.sort;
 
     function apply() {
       let list = P.filter(p => {
         if (state.cat === "collares" || state.cat === "anillos") { if (p.categoria !== state.cat) return false; }
+        if (state.cat === "cyber" && !enPromo(p)) return false;
         if (state.cat === "novedades" && !p.nuevo) return false;
         if (state.cat === "best-sellers" && !p.bestSeller) return false;
-        if (p.precio > state.max) return false;
+        if (pv(p) > state.max) return false;
         if (state.q && !norm(p.nombre + " " + p.categoria + " " + p.descripcion).includes(norm(state.q))) return false;
         return true;
       });
       const s = state.sort;
-      if (s === "precio-asc") list.sort((a, b) => a.precio - b.precio);
-      if (s === "precio-desc") list.sort((a, b) => b.precio - a.precio);
+      if (s === "precio-asc") list.sort((a, b) => pv(a) - pv(b));
+      if (s === "precio-desc") list.sort((a, b) => pv(b) - pv(a));
       if (s === "nuevos") list.sort((a, b) => b.fecha.localeCompare(a.fecha));
       if (s === "vendidos") list.sort((a, b) => b.vendidos - a.vendidos);
       // los agotados siempre al final
@@ -1629,9 +1664,9 @@ window.SS_PH = {
         <div class="crumbs mono"><a href="#/">Inicio</a> / <a href="#/shop?cat=${p.categoria}">${cat}</a></div>
         <h1 class="pdp__name display">${esc(p.nombre)}</h1>
         <div>
-          <div class="pdp__price">${money(p.precio)}</div>
-          ${cuotasTxt(p.precio)}
-          ${C.descuentoTransferencia ? `<div class="cuotas"><b style="color:var(--black)">${money(p.precio * (1 - C.descuentoTransferencia / 100))}</b> con transferencia (${C.descuentoTransferencia}% OFF)</div>` : ""}
+          <div class="pdp__price">${precioHTML(p)}</div>
+          ${cuotasTxt(pv(p))}
+          ${C.descuentoTransferencia ? `<div class="cuotas"><b style="color:var(--black)">${money(pv(p) * (1 - C.descuentoTransferencia / 100))}</b> con transferencia (${C.descuentoTransferencia}% OFF)</div>` : ""}
         </div>
         <p class="pdp__desc">${esc(p.descripcion)}</p>
         <dl class="spec">
@@ -1678,7 +1713,8 @@ window.SS_PH = {
     let costoEnvio = envio ? envio.precio : 0;
     if (C.envioGratisDesde && sub >= C.envioGratisDesde) costoEnvio = 0;
     const desc = pago && pago.descuento && C.descuentoTransferencia ? sub * C.descuentoTransferencia / 100 : 0;
-    return { c, sub, envio, pago, costoEnvio, desc, total: sub - desc + costoEnvio };
+    const promo = c.reduce((s, i) => { const p = byId(i.id); return s + (p.precio - pv(p)) * i.qty; }, 0);
+    return { c, sub, envio, pago, costoEnvio, desc, promo, total: sub - desc + costoEnvio };
   }
   function renderSummary() {
     const t = totals();
@@ -1688,10 +1724,11 @@ window.SS_PH = {
     }
     $("#summaryItems").innerHTML = t.c.map(i => {
       const p = byId(i.id);
-      return `<div class="summary__item"><img src="${IMG(p.imagenes[0])}" alt=""><div><b style="text-transform:uppercase">${esc(p.nombre)}</b><br><span style="color:var(--silver-2)">x${i.qty}</span></div><span class="price" style="font-size:13px">${money(p.precio * i.qty)}</span></div>`;
+      return `<div class="summary__item"><img src="${IMG(p.imagenes[0])}" alt=""><div><b style="text-transform:uppercase">${esc(p.nombre)}</b><br><span style="color:var(--silver-2)">x${i.qty}</span></div><span class="price" style="font-size:13px">${money(pv(p) * i.qty)}</span></div>`;
     }).join("");
     $("#summaryLines").innerHTML = `
       <div><span>Subtotal</span><span>${money(t.sub)}</span></div>
+      ${t.promo ? `<div class="disc"><span>CYBER SS ${C.promo.descuento}% OFF collares (ya incluido)</span><span>ahorrás ${money(t.promo)}</span></div>` : ""}
       ${t.desc ? `<div class="disc"><span>Transferencia −${C.descuentoTransferencia}%</span><span>−${money(t.desc)}</span></div>` : ""}
       <div><span>Envío</span><span>${t.envio && t.envio.aCoordinar ? "A coordinar" : t.costoEnvio === 0 ? "Gratis" : money(t.costoEnvio)}</span></div>`;
     $("#summaryTotal").textContent = money(t.total);
@@ -1755,11 +1792,11 @@ window.SS_PH = {
       const t = totals();
       if (!t.c.length) return;
       const nro = "SS-" + Date.now().toString(36).toUpperCase().slice(-6);
-      const lineas = t.c.map(i => { const p = byId(i.id); return `• ${p.nombre} x${i.qty} — ${money(p.precio * i.qty)}`; }).join("\n");
+      const lineas = t.c.map(i => { const p = byId(i.id); return `• ${p.nombre} x${i.qty} — ${money(pv(p) * i.qty)}`; }).join("\n");
       const detalle =
 `PEDIDO ${nro}
 ${lineas}
-Subtotal: ${money(t.sub)}${t.desc ? `\nDescuento transferencia: −${money(t.desc)}` : ""}
+Subtotal: ${money(t.sub)}${t.promo ? `\nCYBER SS ${C.promo.descuento}% OFF en collares (ya incluido en los precios): ahorro ${money(t.promo)}` : ""}${t.desc ? `\nDescuento transferencia: −${money(t.desc)}` : ""}
 TOTAL PRODUCTOS: ${money(t.total)}
 Envío (Correo Argentino · ${d.servicio}): a coordinar, se informa por WhatsApp
 Pago: ${t.pago.nombre}${t.pago.id === "transferencia" && C.aliasTransferencia ? ` (alias ${C.aliasTransferencia})` : ""}
@@ -1838,6 +1875,10 @@ ${dom ? `Entrega a domicilio: ${d.direccion}, ${d.localidad}, ${d.provincia} (CP
     else window.scrollTo(0, 0);
   }
 
+  (function () { // al llegar la hora de inicio/fin de la promo la página se refresca sola
+    const now = Date.now(), ts = [promoMs("inicio"), promoMs("fin")].filter(t => t && t > now);
+    if (C.promo && C.promo.activa && ts.length) { const w = Math.min(...ts) - now; if (w < 2147483647) setTimeout(() => location.reload(), w + 500); }
+  })();
   renderChrome();
   bindChrome();
   updateCount(false);
