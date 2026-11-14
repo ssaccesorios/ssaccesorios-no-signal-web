@@ -703,7 +703,7 @@ window.SS_CONFIG = {
   cuotasSinInteres: 0,
 
   // Descuento por transferencia (%). Poné 0 para ocultarlo.
-  descuentoTransferencia: 10,
+  descuentoTransferencia: 0,
 
   // PROMO CYBER SS — descuento automático por fecha. Los precios originales (precio: ...) NO se tocan:
   // la web calcula el precio con descuento solo mientras la promo está activa y vuelve sola al precio original al terminar.
@@ -1450,7 +1450,7 @@ window.SS_PH = {
   function renderChrome() {
     const nav = promoActiva() ? [...NAV.slice(0, 5), ["CYBER SS", "#/shop?cat=cyber", "cyber"], ...NAV.slice(5)] : NAV;
     document.body.classList.toggle("has-promo", promoActiva());
-    const top = `ENVÍOS A TODO EL PAÍS <span class="dot">●</span> ${C.descuentoTransferencia ? C.descuentoTransferencia + "% OFF POR TRANSFERENCIA" : ""} <span class="dot">●</span> @${C.instagram}`;
+    const top = `ENVÍOS A TODO EL PAÍS <span class="dot">●</span> ${C.descuentoTransferencia ? C.descuentoTransferencia + "% OFF POR TRANSFERENCIA <span class=\"dot\">●</span> " : ""}@${C.instagram}`;
     const topItems = Array(6).fill(`<span>${top}</span>`).join("");
 
     const header = `
